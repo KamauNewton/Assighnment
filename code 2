@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <time.h>
+
+// Function to calculate the difference in days between two dates
+int calculateDaysOverdue(struct tm dueDate, struct tm returnDate) {
+    time_t due = mktime(&dueDate);
+    time_t ret = mktime(&returnDate);
+    double difference = difftime(ret, due) / (60 * 60 * 24);
+    return (int)difference;
+}
+
+int main() {
+    struct tm dueDate = {0}, returnDate = {0};
+    int daysOverdue, fine = 0;
+
+    // Input due date
+    printf("Enter due date (dd/mm/yyyy): ");
+    dueDate.tm_mon -= 1; // Months are 0-11 in struct tm
+    dueDate.tm_year -= 1900; // Years since 1900 in struct tm
+
+    // Input return date
+    printf("Enter return date (dd/mm/yyyy): ");
+    returnDate.tm_mon -= 1;
+    returnDate.tm_year -= 1900;
+
+    // Calculate days overdue
+    daysOverdue = calculateDaysOverdue(dueDate, returnDate);
+
+    // Calculate fine
+    if (daysOverdue > 0) {
+        if (daysOverdue <= 7) {
+            fine = daysOverdue * 5;
+        } else if (daysOverdue <= 14) {
+            fine = 7 * 5 + (daysOverdue - 7) * 10;
+        } else {
+            fine = 7 * 5 + 7 * 10 + (daysOverdue - 14) * 20;
+        }
+    }
+
+    // Output results
+    printf("Due date: %02d/%02d/%04d\n", dueDate.tm_mday, dueDate.tm_mon + 1, dueDate.tm_year + 1900);
+    printf("Return date: %02d/%02d/%04d\n", returnDate.tm_mday, returnDate.tm_mon + 1, returnDate.tm_year + 1900);
+    printf("Days overdue: %d\n", daysOverdue);
+    printf("Fine: Ksh. %d\n", fine);
+
+    return 0;
+}
